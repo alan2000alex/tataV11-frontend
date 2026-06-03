@@ -8,8 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { io } from "socket.io-client";
 
-// const socket = io("http://localhost:3003");
-const socket = io("https://tatapower.esys.co.in:3003", {secure: true});
+const socket = io(process.env.REACT_APP_SOCKET_URL);
 
 const Dashboard = () => {
     const [bypassedMachines, setBypassedMachines] = useState([]);

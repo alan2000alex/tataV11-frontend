@@ -7,44 +7,12 @@ const MqttSettings = () => {
         PORT: '',
         HOST: '',
         USERNAME: '',
-        PASSWORD: '',
         PROTOCOL: '',
     });
-    const { PORT, HOST, USERNAME, PASSWORD, PROTOCOL } = mqttConfigValues
-
-    const handleChange = name => event => {
-        setMqttConfigValues({
-            ...mqttConfigValues,
-            [name]: event.target.value
-        });
-    };
-
-    const clickSubmit = async (e) => {
-        e.preventDefault();
-        const mqttConfig = { PORT, HOST, USERNAME, PASSWORD, PROTOCOL };
-                
-        try {
-            const res = await fetch(`${API}/mqttConfig`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(mqttConfig)
-            });
-                    
-            const data = await res.json()
-            if (data.status) {
-                setMqttConfigValues(data.prevSettings);
-            } else {
-                throw new Error("Error updating config")
-            }
-        } catch (err) {
-            alert("Error updating config: ", err)
-        }  
-    };
+    const { PORT, HOST, USERNAME, PROTOCOL } = mqttConfigValues
 
     // ---------------------------------------------------------------------
-    // get last config details
+    // get current config details (display-only; managed via environment vars)
     const fetchPrevSettings = async () => {
         const res = await fetch(`${API}/getPrevMqttSetting`, {
             method: "GET",
@@ -64,65 +32,28 @@ const MqttSettings = () => {
 
     return (
         <div className='mqtt-settings--form-wrapper'>
-            <form onSubmit={clickSubmit} className='mqtt-settings--form'>
+            <div className='mqtt-settings--form'>
+                <p className="mqtt-settings--notice">
+                    MQTT settings are managed via environment variables.
+                    Changing them requires editing <code>.env</code> and redeploying.
+                </p>
                 <div className="mqtt-settings--form-group">
-                    <label>Port Number<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("PORT")}
-                        type="text"
-                        className="mqtt-settings-inputFieldArea"
-                        value={PORT}
-                        required
-                    />
+                    <label>Port Number</label>
+                    <div className="mqtt-settings-inputFieldArea">{PORT}</div>
                 </div>
                 <div className="mqtt-settings--form-group">
-                    <label>Host<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("HOST")}
-                        type="text"
-                        className="mqtt-settings-inputFieldArea"
-                        value={HOST}
-                        required
-                    />
+                    <label>Host</label>
+                    <div className="mqtt-settings-inputFieldArea">{HOST}</div>
                 </div>
                 <div className="mqtt-settings--form-group">
-                    <label>User Name<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("USERNAME")}
-                        type="text"
-                        className="mqtt-settings-inputFieldArea"
-                        value={USERNAME}
-                        required
-                    />
+                    <label>User Name</label>
+                    <div className="mqtt-settings-inputFieldArea">{USERNAME}</div>
                 </div>
                 <div className="mqtt-settings--form-group">
-                    <label>Password<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("PASSWORD")}
-                        type="password"
-                        className="mqtt-settings-inputFieldArea"
-                        value={PASSWORD}
-                        required
-                    />
+                    <label>Protocol</label>
+                    <div className="mqtt-settings-inputFieldArea">{PROTOCOL}</div>
                 </div>
-                <div className="mqtt-settings--form-group">
-                    <label>Protocol<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("PROTOCOL")}
-                        type="text"
-                        className="mqtt-settings-inputFieldArea"
-                        value={PROTOCOL}
-                        required
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className='mqtt-settings--button'
-                >
-                    Save Changes
-                </button>
-            </form>
+            </div>
         </div>
     )
 }

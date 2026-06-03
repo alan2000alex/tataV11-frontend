@@ -5,47 +5,14 @@ import "./dbSettings.css"
 const DbSettings = () => {
     const [dbConfigValues, setDbConfigValues] = useState({
         HOST: '',
-        PASSWORD: '',
         DB_PORT: '',
         DATABASE: '',
         USER: '',
     });
-    const { HOST, PASSWORD, DB_PORT, DATABASE, USER } = dbConfigValues
-
-    const handleChange = name => event => {
-        setDbConfigValues({
-            ...dbConfigValues,
-            [name]: event.target.value
-        });
-    };
-
-    // Update the db settings on save
-    const clickSubmit = async (e) => {
-        e.preventDefault();
-        const dbConfig = { HOST, PASSWORD, DB_PORT, DATABASE, USER };
-                
-        try {
-            const res = await fetch(`${API}/dbConfig`, {
-                method: "PATCH",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(dbConfig)
-            });
-                    
-            const data = await res.json()
-            if (data.status) {
-                setDbConfigValues(data.prevSettings);
-            } else {
-                throw new Error("Error updating config")
-            }
-        } catch (err) {
-            alert("Error updating config: ", err)
-        }  
-    };
+    const { HOST, DB_PORT, DATABASE, USER } = dbConfigValues
 
     // ---------------------------------------------------------------------
-    // get last config details
+    // get current config details (display-only; managed via environment vars)
     const fetchPrevSettings = async () => {
         const res = await fetch(`${API}/getPrevDbSetting`, {
             method: "GET",
@@ -63,68 +30,30 @@ const DbSettings = () => {
     }, [])
     // ---------------------------------------------------------------------
 
-
     return (
         <div className='db-settings--form-wrapper'>
-            <form onSubmit={clickSubmit} className='db-settings--form'>
+            <div className='db-settings--form'>
+                <p className="db-settings--notice">
+                    Database settings are managed via environment variables.
+                    Changing them requires editing <code>.env</code> and redeploying.
+                </p>
                 <div className="db-settings--form-group">
-                    <label>Host<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("HOST")}
-                        type="text"
-                        className="db-settings-inputFieldArea"
-                        value={HOST}
-                        required
-                    />
+                    <label>Host</label>
+                    <div className="db-settings-inputFieldArea">{HOST}</div>
                 </div>
                 <div className="db-settings--form-group">
-                    <label>Password<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("PASSWORD")}
-                        type="password"
-                        className="db-settings-inputFieldArea"
-                        value={PASSWORD}
-                        required
-                    />
+                    <label>Port Number</label>
+                    <div className="db-settings-inputFieldArea">{DB_PORT}</div>
                 </div>
                 <div className="db-settings--form-group">
-                    <label>Port Number<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("DB_PORT")}
-                        type="text"
-                        className="db-settings-inputFieldArea"
-                        value={DB_PORT}
-                        required
-                    />
+                    <label>Database Name</label>
+                    <div className="db-settings-inputFieldArea">{DATABASE}</div>
                 </div>
                 <div className="db-settings--form-group">
-                    <label>Database Name<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("DATABASE")}
-                        type="text"
-                        className="db-settings-inputFieldArea"
-                        value={DATABASE}
-                        required
-                    />
+                    <label>User</label>
+                    <div className="db-settings-inputFieldArea">{USER}</div>
                 </div>
-                <div className="db-settings--form-group">
-                    <label>User<span style={{ color: "#426C2A" }}>*</span></label>
-                    <input
-                        onChange={handleChange("USER")}
-                        type="text"
-                        className="db-settings-inputFieldArea"
-                        value={USER}
-                        required
-                    />
-                </div>
-
-                <button
-                    type="submit"
-                    className='db-settings--button'
-                >
-                    Save Changes
-                </button>
-            </form>
+            </div>
         </div>
     )
 }
